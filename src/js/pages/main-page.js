@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+const mainPage = `
     <div id="wrapper">
         <header>
             <a href="#" class="logo">Name Chat</a>
@@ -25,13 +16,7 @@
         <main>
             <div class="chat-block">
                 <div class="users-block">
-                    <p>Online: <span class="online-users"></span></p>
-                    <ul>
-                        <li><a href="#">John Snow</a></li>
-                        <li><a href="#">Andrew Simpson</a></li>
-                        <li><a href="#">Alison Black</a></li>
-                        <li><a href="#">Sasha Stuart</a></li>
-                    </ul>
+                    <ul id="users"></ul>
                 </div>
                 <div class="chat">
                     <ul class="select-chat">
@@ -40,17 +25,23 @@
                     </ul>
                     <div class="chat-content">
                         <div class="message">
-                            <a href="#">John Snow: </a>
+                            <a href="#" class="user">John Snow: </a>
                             <p>Hi, how is the weather there?</p>
                         </div>
                     </div>
                     <div class="create-message">
                         <textarea></textarea>
                         <input class="send" type="submit" value="Send Message">
+                        <div class="edit-panel">
+                            <button></button>
+                            <button></button>
+                            <button></button>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
-</body>
-</html>
+`
+
+export default mainPage;
