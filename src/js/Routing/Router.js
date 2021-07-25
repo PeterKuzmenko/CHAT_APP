@@ -9,13 +9,13 @@ const routerConfig = {
     },
     'login': {
         data: {},
-        hash: '#login',
+        hash: 'login',
         component: LoginComponent
     }
     ,
     'register': {
         data: {},
-        hash: '#register',
+        hash: 'register',
         component: RegisterComponent
     }
 }
@@ -33,6 +33,8 @@ export default class Router {
 
         if (conf.hash) {
             window.location.hash = conf.hash;
+        } else {
+            history.pushState("", document.title, window.location.pathname + window.location.search);
         }
 
         const component = new conf.component();

@@ -1,5 +1,5 @@
-import { router } from "../.."
-import Component from "../Component"
+import Component from "../Component";
+import auth from "../../chat-functions/auth";
 
 export default class RegisterComponent extends Component {
     constructor(anchor) {
@@ -14,6 +14,7 @@ export default class RegisterComponent extends Component {
     render() {
         return `
             <form id="register">
+                <h2>Регистрация</h2>
                 <label for="username">
                     <input type="text" id="username" name="username"  placeholder="Username">
                 </label>
@@ -21,15 +22,18 @@ export default class RegisterComponent extends Component {
                     <input type="password" name="password"  placeholder="Password">
                 </label>
                 <label for="repeat-password">
-                    <input type="password" id="repeat-password"  placeholder="Repeat password">
+                    <input type="password" name="repeat-password" placeholder="Repeat password">
                 </label>
-                <input type="submit" value="Зарегестрироваться">
+                <input type="submit" class="send" value="Зарегистрироваться">
                 <a href="#login" data-link-to="login">Войти</a>
+                <p id="alert"></p>
             </form>
         `
     } 
 
     setupListeners() {
+        this.anchor.classList.add('form-container');
+
         this.addLinkHandler();
         
         const form = document.getElementById('register');
@@ -40,24 +44,29 @@ export default class RegisterComponent extends Component {
             const formData = new FormData(form);
             const username = formData.get('username');
             const password = formData.get('password');
-            const passwordCopy = formData.get('repear-password');
+            const passwordCopy = formData.get('repeat-password');
 
-            if (username.length < 5) return
-            if (password.length < 5) return
-            if (passwordCopy !== password) return
+            const alert = document.getElementById('alert');
 
-            fetch('https://studentschat.herokuapp.com/users/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({username, password})
-            })
-                .then((res) => res.json())
-                .then((user) => {
-                    window.localStorage.setItem('user', user);
-                    router.changeRoute('main')
-                })
+            if (password.length < 3) {
+                alert.textContent = 'Password must contain more than 3 symbols!';
+                alert.classList.add('show');
+                return;
+            }
+
+            if (password.includes(' ')) {
+                alert.textContent = "Password mustn't includes spaces!";
+                alert.classList.add('show');
+                return;
+            }
+
+            if (password !== passwordCopy) {
+                alert.textContent = "Passwords aren't coincided!"
+                alert.classList.add('show');
+                return;
+            }
+
+            auth('register', {username, password});
         })
     } 
 }
