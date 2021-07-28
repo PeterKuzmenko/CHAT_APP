@@ -7,10 +7,6 @@ export default class LoginComponent extends Component {
         this.anchor = document.createElement('div');
     }
 
-    onInit() {
-        console.log('LoginComponent init');
-    }
-
     render() {
         return `
             <form id="login">

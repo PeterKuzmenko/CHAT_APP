@@ -3,12 +3,8 @@ import auth from "../../chat-functions/auth";
 
 export default class RegisterComponent extends Component {
     constructor(anchor) {
-        super()
-        this.anchor = document.createElement('div')
-    }
-
-    onInit() {
-        console.log('RegisterComponent init')
+        super();
+        this.anchor = document.createElement('div');
     }
 
     render() {

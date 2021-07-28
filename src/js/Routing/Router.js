@@ -39,8 +39,6 @@ export default class Router {
 
         const component = new conf.component();
 
-        component.onInit();
-
         const dom = component.dom;
 
         //if (this.currentDomComponent)
