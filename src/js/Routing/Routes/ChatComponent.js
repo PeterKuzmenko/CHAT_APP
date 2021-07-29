@@ -184,10 +184,6 @@ export default class ChatComponent extends Component {
                                 messageElement.innerHTML = `<p>${message.message}</p>`;
 
                                 this.messagesFromOneAuthor.append(messageElement);
-
-                                if (i === messages.length - 1) {
-                                    this.messagesOutput.append(this.messagesFromOneAuthor);
-                                }
                             } else {
                                 this.messagesOutput.append(this.messagesFromOneAuthor);
 
@@ -206,13 +202,19 @@ export default class ChatComponent extends Component {
                                     ava.href = `#${message.username}`;
                                     this.messagesFromOneAuthor.append(ava);
 
+                                    console.log(this.messagesFromOneAuthor);
+
                                     messageElement.innerHTML = `
                                         <a href="#${message.username}" class="name-author">${message.username}</a> 
                                         <p>${message.message}</p>
                                     `;
                                 }
-
+                                
                                 this.messagesFromOneAuthor.append(messageElement);
+                            }
+
+                            if (i === messages.length - 1) {
+                                this.messagesOutput.append(this.messagesFromOneAuthor);
                             }
 
                             this.prevAuthorMessage = message.username;

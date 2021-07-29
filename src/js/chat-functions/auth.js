@@ -10,6 +10,16 @@ export default function auth(type, values) {
     })
         .then((res) => {
             if (res.status !== 200) {
+                const alert = document.getElementById('alert');
+
+                if (type === 'login') {
+                    alert.textContent = 'Wrong login or password!';
+                    alert.classList.add('show');
+                } else {
+                    alert.textContent = 'This user is already exist!';
+                    alert.classList.add('show');
+                }
+
                 throw 'Something went wrong';
             }
 
