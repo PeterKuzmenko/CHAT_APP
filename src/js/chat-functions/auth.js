@@ -1,7 +1,8 @@
-import { router } from "../index"
+import { router } from "../index";
+import { CHAT_API_URL } from "../constants";
 
 export default function auth(type, values) {
-    fetch(`https://studentschat.herokuapp.com/users/${type}`, {
+    fetch(`${CHAT_API_URL}/users/${type}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -26,7 +27,7 @@ export default function auth(type, values) {
             return res.json();
         })
         .then((user) => {
-            window.localStorage.setItem('user', JSON.stringify(user));
+            localStorage.setItem('user', JSON.stringify(user));
             router.changeRoute('main');
         })
         .catch(e => {

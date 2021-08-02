@@ -2,6 +2,7 @@ import Component from "../Component";
 import Loader from "../../chat-functions/Loader";
 import { router } from "../..";
 
+import { CHAT_API_URL } from "../../constants";
 import avatars from "../../chat-functions/getAvatars";
 import getLocalUser from "../../chat-functions/getLocalUser";
 
@@ -9,12 +10,6 @@ export default class ChatComponent extends Component {
     constructor() {
         super();
         this.anchor = document.createElement('div');
-
-        this.localUsersLength = 0;
-        this.localMessagesLength = 0;
-        this.prevAuthorMessage = '';
-        this.messagesFromOneAuthor = document.createElement('div');
-        this.messagesFromOneAuthor.classList.add('messages-from-one-author');
     }
 
     render() {
@@ -74,9 +69,15 @@ export default class ChatComponent extends Component {
         this.timeInfo();
         this.logoutListener();
         this.sendMessageListener();
+        
+        this.localUsersLength = 0;
+        this.localMessagesLength = 0;
+        this.prevAuthorMessage = '';
+        this.messagesFromOneAuthor = document.createElement('div');
+        this.messagesFromOneAuthor.classList.add('messages-from-one-author');
 
         this.fetchData(usersLoader, messageLoader);
-        setInterval(this.fetchData.bind(this), 2500);
+        this.fetchDataInterval = setInterval(this.fetchData.bind(this), 2500);
     } 
 
     logoutListener() {
@@ -88,7 +89,7 @@ export default class ChatComponent extends Component {
             if (ask) {
                 const user = getLocalUser();
 
-                fetch('https://studentschat.herokuapp.com/users/logout', {
+                fetch(CHAT_API_URL + '/users/logout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -99,6 +100,10 @@ export default class ChatComponent extends Component {
                 })
                     .then((res) => {
                         if (res.status === 200) {
+                            clearInterval(this.fetchDataInterval);
+                            clearInterval(this.timeOnlineInterval);
+                            clearInterval(this.localTimeInterval);
+
                             window.localStorage.removeItem('user');
                             router.changeRoute('login');
                         }
@@ -121,7 +126,7 @@ export default class ChatComponent extends Component {
             const datetime = new Date().toISOString();
             const myAccount = getLocalUser();
 
-            fetch('https://studentschat.herokuapp.com/messages', {
+            fetch(CHAT_API_URL + '/messages', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -140,7 +145,7 @@ export default class ChatComponent extends Component {
     }
 
     fetchData(...loaders) {
-        fetch('https://studentschat.herokuapp.com/users')
+        fetch(CHAT_API_URL + '/users')
             .then(data => data.json())
             .then(users => {
                 if (loaders.length) {
@@ -164,7 +169,7 @@ export default class ChatComponent extends Component {
                 
                 this.localUsersLength = users.length;
 
-                fetch('https://studentschat.herokuapp.com/messages')
+                fetch(CHAT_API_URL + '/messages')
                     .then(data => data.json())
                     .then(messages => {
                         if (loaders.length) {
@@ -177,11 +182,21 @@ export default class ChatComponent extends Component {
                             const message = messages[i];
                             const user = users.find((item) => item.username === message.username);
 
+                            let timeMessage;
+
+                            if (message.datetime.slice(11, 13) < 12) {
+                                timeMessage = message.datetime.slice(11, 16) + ' AM'
+                            } else if (message.datetime.slice(11, 13) == 12) {
+                                timeMessage = message.datetime.slice(11, 16) + ' PM';
+                            } else {
+                                timeMessage = message.datetime.slice(11, 13) % 12 + message.datetime.slice(13, 16) + ' PM';
+                            }
+
                             const messageElement = document.createElement('div');
                             messageElement.classList.add('message');
 
                             if (this.prevAuthorMessage === message.username) {
-                                messageElement.innerHTML = `<p>${message.message}</p>`;
+                                messageElement.innerHTML = `<p>${message.message}</p><span class="time">${timeMessage}</span>`;
 
                                 this.messagesFromOneAuthor.append(messageElement);
                             } else {
@@ -192,8 +207,8 @@ export default class ChatComponent extends Component {
 
                                 if (message.username === myAccount.username) {
                                     this.messagesFromOneAuthor.classList.add('my-messages');
-
-                                    messageElement.innerHTML = `<p>${message.message}</p>`;
+                                    
+                                    messageElement.innerHTML = `<p>${message.message}</p><span class="time">${timeMessage}</span>`;
                                 } else {
                                     const ava = document.createElement('a');
                                     const avaSource = user.avatarId ? avatars[user.avatarId] : avatars.default;
@@ -202,11 +217,10 @@ export default class ChatComponent extends Component {
                                     ava.href = `#${message.username}`;
                                     this.messagesFromOneAuthor.append(ava);
 
-                                    console.log(this.messagesFromOneAuthor);
-
                                     messageElement.innerHTML = `
                                         <a href="#${message.username}" class="name-author">${message.username}</a> 
                                         <p>${message.message}</p>
+                                        <span class="time">${timeMessage}</span>
                                     `;
                                 }
                                 
@@ -238,7 +252,7 @@ export default class ChatComponent extends Component {
         const timeOnlineOutput = document.getElementById('time-online');
         let timeOnlineSeconds = 0;
         
-        setInterval(() => {
+        this.timeOnlineInterval = setInterval(() => {
             timeOnlineSeconds++;
             let value = '';
 
@@ -262,7 +276,7 @@ export default class ChatComponent extends Component {
         const now = new Date();
         localTimeOutput.innerHTML = `${now.getHours()}h ${now.getMinutes()}m`
 
-        setInterval(() => {
+        this.localTimeInterval = setInterval(() => {
             const now = new Date();
             
             localTimeOutput.innerHTML = `${now.getHours()}h ${now.getMinutes()}m`

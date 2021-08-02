@@ -242,15 +242,12 @@ header {
       display: flex;
       flex-direction: column;
       margin-bottom: 4px;
-      padding: 10px;
+      padding: 5px 10px 7px 10px;
       background: rgba(68, 50, 168, 0.8);
       color: #fff;
       border-radius: 5px;
       margin-right: auto;
 
-      &:first-of-type {
-        padding-top: 5px;
-      }
       &:last-of-type {
         border-radius: 5px 5px 5px 0;
         margin-bottom: 8px;
@@ -265,10 +262,17 @@ header {
         transform: rotate(-45deg);
       }
 
+      .time {
+        font-size: 10px;
+        align-self: flex-end;
+        color: #ccc;
+        margin-top: 4px;
+      }
+
       .name-author {
         font-weight: bold;
         color: #e0ff9c;
-        margin-bottom: 5px;
+        margin-bottom: 2px;
       }
     }
 
