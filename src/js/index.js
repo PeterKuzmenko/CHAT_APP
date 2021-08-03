@@ -1,7 +1,6 @@
 import 'babel-polyfill';
 
-import Router from './Routing/Router'
-
+import Router from './Routing/Router';
 import './../sass/styles.scss';
 
 const router = new Router(document.getElementById('root'));
@@ -9,10 +8,9 @@ const router = new Router(document.getElementById('root'));
 const isAuth = !!window.localStorage.getItem('user');
 
 if (isAuth) {
-    router.changeRoute('main');
+  router.changeRoute('main');
 } else {
-    router.changeRoute('register');
+  router.changeRoute('register');
 }
 
-export {router}
-
+export {router};

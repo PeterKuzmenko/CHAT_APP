@@ -1,58 +1,63 @@
-import Component from "../Component";
-import auth from "../../chat-functions/auth";
+import Component from '../Component';
+import auth from '../../chat-functions/auth';
 
 export default class LoginComponent extends Component {
-    constructor(anchor) {
-        super();
-        this.anchor = document.createElement('div');
-    }
+  constructor() {
+    super();
+    this.anchor = document.createElement('div');
+  }
 
-    render() {
-        return `
-            <form id="login">
-                <h2>Вход</h2>
-                <label for="username">
-                    <input type="text" id="username" name="username" placeholder="Username">
-                </label>
-                <label for="password">
-                    <input type="password" name="password" placeholder="Password">
-                </label>
-                <input type="submit" class="send" value="Войти">
-                <a href="#register" data-link-to="register">Зарегистрироваться</a>
-                <p id="alert"></p>
-            </form>
-        `
-    } 
+  render() {
+    return `
+      <form id="login">
+        <h2>Вход</h2>
+        <label for="username">
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            placeholder="Username"
+          >
+        </label>
+        <label for="password">
+          <input type="password" name="password" placeholder="Password">
+        </label>
+        <input type="submit" class="send" value="Войти">
+        <a href="#register" data-link-to="register">Зарегистрироваться</a>
+        <p id="alert"></p>
+      </form>
+    `;
+  }
 
-    setupListeners() {
-        this.anchor.classList.add('form-container');
+  setupListeners() {
+    this.anchor.classList.add('form-container');
 
-        this.addLinkHandler();
-        
-        const form = document.getElementById('login');
+    this.addLinkHandler();
 
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
+    const form = document.getElementById('login');
 
-            const formData = new FormData(form);
-            const username = formData.get('username');
-            const password = formData.get('password');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
 
-            const alert = document.getElementById('alert');
+      const formData = new FormData(form);
+      const username = formData.get('username');
+      const password = formData.get('password');
 
-            if (password.length < 3) {
-                alert.textContent = 'Password must contain more than 3 symbols!';
-                alert.classList.add('show');
-                return;
-            }
+      const alert = document.getElementById('alert');
 
-            if (password.includes(' ')) {
-                alert.textContent = "Password mustn't includes spaces!";
-                alert.classList.add('show');
-                return;
-            }
+      if (password.length < 3) {
+        alert.textContent = 'Password must contain more than 3 symbols!';
+        alert.classList.add('show');
+        return;
+      }
 
-            auth('login', {username, password});
-        })
-    } 
+      if (password.includes(' ')) {
+        alert.textContent = 'Password mustn\'t includes spaces!';
+        alert.classList.add('show');
+        return;
+      }
+
+      auth('login', {username, password});
+    });
+  }
 }
