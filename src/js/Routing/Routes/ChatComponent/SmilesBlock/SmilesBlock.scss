@@ -1,0 +1,66 @@
+.smiles-block {
+  cursor: pointer;
+  position: absolute;
+  bottom: 15px;
+  right: 60px;  
+
+  &:after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    border: 6px solid transparent;
+    border-top-color: #fff;
+    transition: 0.3s;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  &:hover .smiles {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  &:hover:after {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+.smiles {
+  width: 195px;
+  height: 200px;
+  padding: 4px;
+  position: absolute;
+  top: -205px;
+  left: -170px;
+  background: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  overflow-y: scroll;
+  opacity: 0;
+  transition: 0.3s;
+  border-radius: 3px;
+  visibility: hidden;
+
+  .smile {
+    cursor: pointer;
+    display: block;
+    padding: 2px;
+    transition: 0.3s;
+
+    &:hover {
+      filter: brightness(1.2);
+    }
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+  }
+}

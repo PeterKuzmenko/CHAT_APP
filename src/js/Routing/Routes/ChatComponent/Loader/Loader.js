@@ -1,3 +1,5 @@
+import './Loader.scss';
+
 export default class Loader {
   constructor(root) {
     this.root = root;
@@ -6,6 +8,7 @@ export default class Loader {
 
   render() {
     this.anchor.classList.add('loader');
+    
     this.anchor.innerHTML = `
       <div class="lds-default">
         <div></div><div></div><div></div>

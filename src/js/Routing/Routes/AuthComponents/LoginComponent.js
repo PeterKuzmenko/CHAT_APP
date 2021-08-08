@@ -1,5 +1,7 @@
-import Component from '../Component';
-import auth from '../../chat-functions/auth';
+import './AuthComponents.scss';
+
+import Component from '../../Component';
+import auth from '../../../chat-functions/auth';
 
 export default class LoginComponent extends Component {
   constructor() {
