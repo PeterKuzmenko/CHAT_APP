@@ -1,15 +1,33 @@
-import Component from '../Component';
-import Loader from '../../chat-functions/Loader';
-import {router} from '../../index';
+import './ChatComponent.scss';
 
-import {CHAT_API_URL} from '../../constants';
-import avatars from '../../chat-functions/getAvatars';
-import getLocalUser from '../../chat-functions/getLocalUser';
+import Component from '../../Component';
+import Loader from './Loader/Loader';
+import {router} from '../../../index';
+
+import {CHAT_API_URL} from '../../../constants';
+import avatars from '../../../chat-functions/getAvatars';
+import getLocalUser from '../../../chat-functions/getLocalUser';
+import SmilesBlock from './SmilesBlock/SmilesBlock';
 
 export default class ChatComponent extends Component {
   constructor() {
     super();
     this.anchor = document.createElement('div');
+
+    this.localUsersLength = 0;
+    this.localMessagesLength = 0;
+    this.prevAuthorMessage = '';
+    this.messagesFromOneAuthor = document.createElement('div');
+    this.messagesFromOneAuthor.classList.add('messages-from-one-author');
+
+    this.chatroom_id = localStorage.getItem('chatroom_id')
+      ? localStorage.getItem('chatroom_id')
+      : 'MAIN';
+  }
+
+  linkTo(e) {
+    super.linkTo(e);
+    this.clearIntervals();
   }
 
   render() {
@@ -29,11 +47,7 @@ export default class ChatComponent extends Component {
               </p>
             </div>
             <div class="profile">
-              <a href="#">Edit personal info</a>
-              <a href="#">
-                Private messages
-                (<span class="amount-pritvate-messages">3</span>)
-              </a>
+              <a href="#" data-link-to="personal_info">Personal info</a>
             </div>
             <input type="button" value="logout" id="logout-btn">
           </div>
@@ -52,6 +66,13 @@ export default class ChatComponent extends Component {
                 <div class="create-message">
                   <textarea id="input"></textarea>
                   <input id="send" type="button" value="Send Message">
+                  <div class="smiles-block">
+                    <span class="icon">&#128512;</span>
+                    <div id="smiles"></div>
+                  </div>
+                  <div class="symbols-block">
+                    <span id="symbols">0</span>/5000
+                  </div>
                   <div class="edit-panel">
                     <button></button>
                     <button></button>
@@ -66,6 +87,8 @@ export default class ChatComponent extends Component {
   }
 
   setupListeners() {
+    this.addLinkHandler();
+    
     this.messagesOutput = document.getElementById('messages');
     this.usersOutput = document.getElementById('users');
 
@@ -78,12 +101,6 @@ export default class ChatComponent extends Component {
     this.timeInfo();
     this.logoutListener();
     this.sendMessageListener();
-
-    this.localUsersLength = 0;
-    this.localMessagesLength = 0;
-    this.prevAuthorMessage = '';
-    this.messagesFromOneAuthor = document.createElement('div');
-    this.messagesFromOneAuthor.classList.add('messages-from-one-author');
 
     this.fetchData(usersLoader, messageLoader);
     this.fetchDataInterval = setInterval(this.fetchData.bind(this), 2500);
@@ -109,9 +126,7 @@ export default class ChatComponent extends Component {
         })
           .then((res) => {
             if (res.status === 200) {
-              clearInterval(this.fetchDataInterval);
-              clearInterval(this.timeOnlineInterval);
-              clearInterval(this.localTimeInterval);
+              this.clearIntervals();
 
               window.localStorage.removeItem('user');
               router.changeRoute('login');
@@ -125,6 +140,20 @@ export default class ChatComponent extends Component {
   sendMessageListener() {
     const sendBtn = document.getElementById('send');
     const input = document.getElementById('input');
+
+    const symbolsOuptput = document.getElementById('symbols');
+
+    const rootSmiles = document.getElementById('smiles');
+    const smilesBlock = new SmilesBlock(rootSmiles, input, symbolsOuptput);
+    smilesBlock.render();
+
+    input.addEventListener('input', e => {
+      if (input.value.length > 5000) {
+        input.value = input.value.slice(0, 5000);
+      }
+
+      symbolsOuptput.textContent = input.value.length;
+    });
 
     sendBtn.addEventListener('click', e => {
       if (!input.value) return;
@@ -151,6 +180,12 @@ export default class ChatComponent extends Component {
           this.fetchData.apply(this);
         });
     });
+  }
+
+  clearIntervals() {
+    clearInterval(this.fetchDataInterval);
+    clearInterval(this.timeOnlineInterval);
+    clearInterval(this.localTimeInterval);
   }
 
   fetchData(...loaders) {
@@ -190,6 +225,9 @@ export default class ChatComponent extends Component {
 
             for (let i = this.localMessagesLength; i < messages.length; i++) {
               const message = messages[i];
+
+              if (this.chatroom_id !== message.chatroom_id) return;
+
               const user = users.find((item) => {
                 return item.username === message.username;
               });
@@ -309,6 +347,6 @@ export default class ChatComponent extends Component {
       const now = new Date();
 
       localTimeOutput.innerHTML = `${now.getHours()}h ${now.getMinutes()}m`;
-    }, 60000);
+    }, 10000);
   }
 }

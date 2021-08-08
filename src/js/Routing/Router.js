@@ -1,6 +1,7 @@
-import ChatComponent from './Routes/ChatComponent';
-import LoginComponent from './Routes/LoginComponent';
-import RegisterComponent from './Routes/RegisterComponent';
+import ChatComponent from './Routes/ChatComponent/ChatComponent';
+import LoginComponent from './Routes/AuthComponents/LoginComponent';
+import RegisterComponent from './Routes/AuthComponents/RegisterComponent';
+import PersonalInfo from './Routes/PersonalInfo/PersonalInfo';
 
 const routerConfig = {
   'main': {
@@ -16,6 +17,11 @@ const routerConfig = {
     data: {},
     hash: 'register',
     Component: RegisterComponent
+  },
+  'personal_info': {
+    data: {},
+    hash: 'personal_info',
+    Component: PersonalInfo
   }
 };
 

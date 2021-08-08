@@ -2,26 +2,24 @@ import {router} from '../index';
 
 export default class Component {
   get dom() {
-    this.anchor.innerHTML = this.render();
-    let i = 0;
-    const someFunction = () => {
-      i++;
-      if (i === 2) {
-        this.setupListeners();
-        document.body.removeEventListener('DOMSubtreeModified', someFunction);
-      }
+    const buildComponent = async () => {
+      this.anchor.innerHTML = await this.render();
+      this.setupListeners();
     };
-    document.body.addEventListener('DOMSubtreeModified', someFunction);
+    
+    buildComponent();
 
     return this.anchor;
   }
 
   addLinkHandler() {
     document.querySelectorAll('a').forEach(item => {
-      item.addEventListener('click', (e) => {
-        e.preventDefault();
-        router.changeRoute(e.target.dataset.linkTo);
-      });
+      item.addEventListener('click', this.linkTo.bind(this));
     });
+  }
+
+  linkTo(e) {
+    e.preventDefault();
+    router.changeRoute(e.target.dataset.linkTo);
   }
 }
